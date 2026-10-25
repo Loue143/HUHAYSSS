@@ -1,0 +1,808 @@
+﻿/* =========================================================
+   ST. CECILIA'S COLLEGE
+   SHARED WEBSITE STYLESHEET
+
+   Contains:
+   - Global settings
+   - Screen / viewport settings
+   - Header
+   - Logo
+   - Footer
+   - Shared form elements
+   - Shared buttons
+   ========================================================= */
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+   ========================================================= */
+
+:root {
+  --ink: #202521;
+  --green: #c8ef65;
+
+  --primary-red: #c0392b;
+  --dark-red: #922b21;
+
+  /* -------------------------------------------------------
+     UNIVERSAL HEADER / FOOTER SIZE
+     ------------------------------------------------------- */
+
+  --header-height: 58px;
+  --footer-height: 38px;
+
+  /* -------------------------------------------------------
+     HORIZONTAL PAGE SPACING
+     Change these values to move header/footer content
+     closer to or farther from the left/right edges.
+     ------------------------------------------------------- */
+
+  --header-side-space: 20px;
+  --footer-side-space: 30px;
+
+  /* -------------------------------------------------------
+     LOGO SETTINGS
+     ------------------------------------------------------- */
+
+  --logo-size: 86px;
+  --logo-left: 10px;
+  --logo-top: 10px;
+
+  /* -------------------------------------------------------
+     SCHOOL NAME POSITION
+     ------------------------------------------------------- */
+
+  --brand-logo-space: 100px;
+
+  /* -------------------------------------------------------
+     FONTS
+     ------------------------------------------------------- */
+
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: "Segoe UI", Arial, sans-serif;
+}
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+
+html,
+body {
+  width: 100%;
+  min-width: 320px;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
+  min-height: 100vh;
+
+  color: var(--ink);
+
+  font-family: var(--sans);
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+button,
+input {
+  font-family: inherit;
+}
+
+
+/* =========================================================
+   SHARED SCREEN SETTINGS
+   ========================================================= */
+
+.site-header,
+.site-footer {
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.site-header {
+  width: 100%;
+
+  height: var(--header-height);
+  min-height: var(--header-height);
+
+  position: relative;
+  z-index: 1000;
+
+  background: rgba(146, 43, 33, 0.98);
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, 0.18);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================================
+   HEADER INNER
+
+   This controls the distance of the header content
+   from the left and right edges of the screen.
+   ========================================================= */
+
+.header-inner {
+  width: 100%;
+  height: 100%;
+
+  padding-left: var(--header-side-space);
+  padding-right: var(--header-side-space);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+/* =========================================================
+   SCHOOL BRAND
+   ========================================================= */
+
+.site-brand {
+  position: static;
+
+  display: flex;
+  align-items: center;
+
+  /*
+   * Distance between the logo and school name.
+   */
+  padding-left: var(--brand-logo-space);
+
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  letter-spacing: 0.03em;
+
+  white-space: nowrap;
+
+  transition:
+    opacity 160ms ease;
+}
+
+
+.site-brand:hover {
+  color: #ffffff;
+
+  opacity: 0.92;
+}
+
+
+/* =========================================================
+   SCHOOL LOGO
+
+   Universal logo used by every page.
+   ========================================================= */
+
+.site-brand::before {
+  content: "";
+
+  position: absolute;
+
+  top: var(--logo-top);
+  left: var(--logo-left);
+
+  width: var(--logo-size);
+  height: var(--logo-size);
+
+  display: block;
+
+  background:
+    #ffffff
+    url("../Images/Logo.jpg")
+    center / 78% 78%
+    no-repeat;
+
+  border:
+    1px solid rgba(0, 0, 0, 0.08);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.22);
+
+  z-index: 1100;
+}
+
+
+/* =========================================================
+   HEADER RIGHT LABEL
+   ========================================================= */
+
+.site-label {
+  color: rgba(255, 255, 255, 0.92);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+
+  text-align: right;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.site-footer {
+  width: 100%;
+
+  height: var(--footer-height);
+  min-height: var(--footer-height);
+
+  position: relative;
+  z-index: 1000;
+
+  background: rgba(146, 43, 33, 0.98);
+
+  border-top:
+    1px solid rgba(255, 255, 255, 0.18);
+
+  color: rgba(255, 255, 255, 0.90);
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   FOOTER INNER
+
+   This controls the distance of footer content
+   from the left and right edges.
+   ========================================================= */
+
+.footer-inner {
+  width: 100%;
+  height: 100%;
+
+  padding-left: var(--footer-side-space);
+  padding-right: var(--footer-side-space);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   SHARED FORM
+   ========================================================= */
+
+.auth-form {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.auth-form label {
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+.auth-form input {
+  width: 100%;
+
+  min-height: 38px;
+
+  margin: 0 0 4px;
+  padding: 7px 10px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.45);
+
+  border-radius: 0;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  color: var(--ink);
+
+  font: inherit;
+
+  outline: none;
+}
+
+
+.auth-form input:focus-visible {
+  outline:
+    2px solid #ffffff;
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   SHARED FORM MESSAGE
+   ========================================================= */
+
+.form-message {
+  margin: 0 0 10px;
+
+  padding: 7px 9px;
+
+  border-left:
+    3px solid #ffffff;
+
+  background:
+    rgba(192, 57, 43, 0.60);
+
+  color: #ffffff;
+
+  font-size: 11px;
+
+  line-height: 1.35;
+}
+
+
+.form-message[hidden] {
+  display: none;
+}
+
+
+/* =========================================================
+   SHARED PRIMARY BUTTON
+   ========================================================= */
+
+.btn-login {
+  width: 100%;
+
+  min-height: 40px;
+
+  margin-top: 3px;
+  padding: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+
+  background: var(--ink);
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+
+.btn-login:hover {
+  background: var(--primary-red);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SHARED SECONDARY BUTTON
+   ========================================================= */
+
+.btn-register {
+  width: 100%;
+
+  min-height: 40px;
+
+  margin-top: 8px;
+  padding: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    rgba(255, 255, 255, 0.20);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.40);
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+
+.btn-register:hover {
+  background:
+    rgba(255, 255, 255, 0.35);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MOBILE HEADER / FOOTER
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  /* -------------------------------------------------------
+     HEADER
+     ------------------------------------------------------- */
+
+  .site-header {
+    height: 56px;
+    min-height: 56px;
+  }
+
+
+  .header-inner {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+
+  .site-brand {
+    padding-left: 76px;
+
+    font-size: 11px;
+  }
+
+
+  .site-brand::before {
+    top: 8px;
+    left: 8px;
+
+    width: 68px;
+    height: 68px;
+
+    background-size: 78% 78%;
+  }
+
+
+  .site-label {
+    font-size: 8px;
+  }
+
+
+  /* -------------------------------------------------------
+     FOOTER
+     ------------------------------------------------------- */
+
+  .site-footer {
+    height: 38px;
+    min-height: 38px;
+
+    font-size: 9px;
+  }
+
+
+  .footer-inner {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  /* -------------------------------------------------------
+     HEADER
+     ------------------------------------------------------- */
+
+  .header-inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+
+  .site-brand {
+    padding-left: 68px;
+
+    font-size: 10px;
+  }
+
+
+  .site-brand::before {
+    top: 8px;
+    left: 7px;
+
+    width: 60px;
+    height: 60px;
+  }
+
+
+  .site-label {
+    display: none;
+  }
+
+
+  /* -------------------------------------------------------
+     FOOTER
+     ------------------------------------------------------- */
+
+  .footer-inner {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+
+/* =========================================================
+   SHARED LOGOUT CONFIRMATION MODAL
+   Available for all portal pages
+   ========================================================= */
+
+/* Dark overlay behind the confirmation dialog */
+.logout-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(20, 25, 22, 0.65);
+  backdrop-filter: blur(4px);
+
+  opacity: 1;
+  visibility: visible;
+
+  transition:
+    opacity 180ms ease,
+    visibility 180ms ease;
+}
+
+/* Hidden state */
+.logout-overlay[hidden] {
+  display: none;
+}
+
+/* Confirmation dialog */
+.logout-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 380px;
+
+  padding: 30px 26px 24px;
+
+  background: #ffffff;
+  color: var(--ink, #202521);
+
+  border: 1px solid rgba(146, 43, 33, 0.15);
+  border-radius: 12px;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.28);
+
+  text-align: center;
+
+  animation: logout-modal-enter 200ms ease-out;
+}
+
+/* Logout icon container */
+.logout-icon {
+  width: 58px;
+  height: 58px;
+
+  margin: 0 auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(192, 57, 43, 0.10);
+  color: var(--primary-red, #c0392b);
+}
+
+/* Icon */
+.logout-icon svg {
+  width: 28px;
+  height: 28px;
+
+  display: block;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  fill: none;
+}
+
+/* Dialog heading */
+.logout-title {
+  margin: 0 0 10px;
+
+  color: var(--ink, #202521);
+
+  font-family: var(--sans, "Segoe UI", Arial, sans-serif);
+  font-size: 21px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+/* Dialog description */
+.logout-description {
+  margin: 0 auto 25px;
+  max-width: 290px;
+
+  color: #68716b;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* Button group */
+.logout-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+/* Shared modal button base */
+.logout-btn {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px 14px;
+
+  border: 1px solid transparent;
+  border-radius: 6px;
+
+  font-family: var(--sans, "Segoe UI", Arial, sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+/* Cancel button */
+.logout-btn-cancel {
+  background: #f3f5f3;
+  color: #343b36;
+
+  border-color: #e1e5e1;
+}
+
+.logout-btn-cancel:hover {
+  background: #e8ece8;
+  border-color: #cbd2cc;
+}
+
+/* Confirm logout button */
+.logout-btn-confirm {
+  background: var(--primary-red, #c0392b);
+  color: #ffffff;
+}
+
+.logout-btn-confirm:hover {
+  background: var(--dark-red, #922b21);
+  transform: translateY(-1px);
+}
+
+/* Keyboard focus */
+.logout-btn:focus-visible {
+  outline: 3px solid var(--green, #c8ef65);
+  outline-offset: 3px;
+}
+
+/* Modal entrance animation */
+@keyframes logout-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .logout-modal {
+    max-width: 340px;
+    padding: 26px 20px 20px;
+  }
+
+  .logout-title {
+    font-size: 19px;
+  }
+
+  .logout-description {
+    font-size: 12px;
+  }
+
+  .logout-actions {
+    gap: 8px;
+  }
+
+  .logout-btn {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .logout-overlay,
+  .logout-modal,
+  .logout-btn {
+    animation: none;
+    transition: none;
+  }
+}
+
+
+}

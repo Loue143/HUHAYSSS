@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Portal Gateway | St. Cecilia's College</title>
+
+  <link rel="stylesheet" href="/CSS/Style.CSS">
+
+  <style>
+    body:has(.page-shell) {
+      width: 100%;
+      min-height: 100vh;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      background:
+        linear-gradient(
+          rgba(70, 10, 5, 0.28),
+          rgba(70, 10, 5, 0.28)
+        ),
+        url("/Images/Background.jpg") center / cover no-repeat;
+    }
+
+    .page-shell {
+      width: 100%;
+      max-width: 1500px;
+      height: calc(
+        100vh -
+        var(--header-height) -
+        var(--footer-height)
+      );
+      min-height: 0;
+      margin: 0 auto;
+      padding: 35px 4% 18px;
+
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1.7fr)
+        minmax(300px, 0.8fr);
+      align-items: center;
+      column-gap: 40px;
+
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+
+    .left-spacer,
+    .right-spacer {
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .transparent-box {
+      width: 100%;
+      max-width: 850px;
+      padding: 20px 26px;
+      background: rgba(15, 20, 18, 0.70);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .transparent-box .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 7px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .transparent-box .eyebrow::before {
+      content: "";
+      width: 24px;
+      height: 3px;
+      flex-shrink: 0;
+      background: var(--green);
+    }
+
+    .transparent-box h1 {
+      margin: 0 0 8px;
+      color: #fff;
+      font-family: var(--serif);
+      font-size: clamp(25px, 2.5vw, 34px);
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    .transparent-box .intro {
+      margin: 0 0 11px;
+      color: #f1f3ed;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .scholarship-list {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .scholarship-list li {
+      width: 100%;
+      padding: 7px 11px;
+      background: rgba(255, 255, 255, 0.10);
+      border-left: 3px solid var(--green);
+      color: #f8f9f5;
+      font-size: 10.5px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .scholarship-list li strong {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .right-spacer {
+      padding: 8px;
+    }
+
+    .transparent-login-box {
+      width: 100%;
+      max-width: 350px;
+      padding: 27px 26px;
+      background: rgba(255, 115, 100, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.40);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .login-card {
+      width: 100%;
+    }
+
+    .login-card h2 {
+      margin: 0 0 5px;
+      color: #fff;
+      font-family: var(--serif);
+      font-size: 27px;
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    .login-card > p:not(.form-message) {
+      margin: 0 0 15px;
+      color: #fdf2f2;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .login-card .form-message {
+      margin: 0 0 10px;
+    }
+
+    .login-card .form-message[hidden] {
+      display: none;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .auth-form label {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .auth-form input {
+      width: 100%;
+      min-width: 0;
+      height: 42px;
+      margin: 0 0 4px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 0;
+      outline: none;
+      background: #e8efff;
+      color: #1c2636;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    .auth-form input:focus {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-login,
+    .btn-register {
+      width: 100%;
+      min-height: 44px;
+      margin-top: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 14px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-login {
+      border: 1px solid #202721;
+      background: #202721;
+      color: #fff;
+    }
+
+    .btn-login:hover {
+      background: #303b32;
+    }
+
+    .btn-register {
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .btn-register:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .btn-login:focus-visible,
+    .btn-register:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 1100px) {
+      .page-shell {
+        grid-template-columns:
+          minmax(0, 1.5fr)
+          minmax(290px, 0.8fr);
+        column-gap: 28px;
+        padding-left: 3%;
+        padding-right: 3%;
+      }
+
+      .transparent-box {
+        padding: 18px 22px;
+      }
+
+      .transparent-login-box {
+        max-width: 330px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body:has(.page-shell) {
+        height: auto;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .page-shell {
+        height: auto;
+        min-height: calc(
+          100vh -
+          var(--header-height) -
+          var(--footer-height)
+        );
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 42px 18px 25px;
+        overflow: visible;
+      }
+
+      .transparent-box {
+        max-width: 720px;
+      }
+
+      .transparent-login-box {
+        max-width: 420px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page-shell {
+        min-height: auto;
+        padding: 42px 12px 22px;
+        gap: 18px;
+      }
+
+      .transparent-box {
+        padding: 17px 15px;
+      }
+
+      .transparent-box h1 {
+        font-size: 25px;
+      }
+
+      .transparent-box .intro {
+        font-size: 11px;
+      }
+
+      .scholarship-list li {
+        padding: 7px 9px;
+        font-size: 10px;
+      }
+
+      .transparent-login-box {
+        padding: 23px 20px;
+      }
+
+      .login-card h2 {
+        font-size: 25px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .page-shell {
+        padding-top: 40px;
+      }
+
+      .transparent-box h1 {
+        font-size: 23px;
+      }
+
+      .transparent-login-box {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="site-brand">
+        St. Cecilia's College
+      </a>
+
+      <span class="site-label">
+        Student Portal
+      </span>
+    </div>
+  </header>
+
+  <main class="page-shell">
+
+    <section class="left-spacer">
+      <div class="transparent-box">
+
+        <p class="eyebrow">
+          Academic Excellence &amp; Financial Grants
+        </p>
+
+        <h1>Empowering Future Leaders.</h1>
+
+        <p class="intro">
+          St. Cecilia's College is committed to supporting
+          deserving students through financial assistance
+          programs, merit-based grants, and community
+          leadership awards designed to help students
+          achieve their academic goals.
+        </p>
+
+        <ul class="scholarship-list">
+          <li>
+            <strong>
+              Employee's Dependents Scholarship (Admin Scholar):
+            </strong>
+            100% discount on tuition, miscellaneous,
+            laboratory, and enrollment fees.
+          </li>
+
+          <li>
+            <strong>
+              Tuition Fee Discount for Other Relatives:
+            </strong>
+            50% tuition fee discount for qualified relatives,
+            including nephews, nieces, and first cousins.
+          </li>
+
+          <li>
+            <strong>
+              Sports and Athletics Scholarship:
+            </strong>
+            25% to 100% free tuition based on tournament
+            level (Municipal, Provincial, Regional, or
+            National), plus free jerseys for basketball
+            and volleyball.
+          </li>
+
+          <li>
+            <strong>UniFAST Scholarship:</strong>
+            Financial assistance of PHP 13,500 per semester
+            for four years, under the applicable CHED
+            UniFAST program and Republic Act No. 10931.
+          </li>
+
+          <li>
+            <strong>Working Scholar Program:</strong>
+            Operational and administrative work-study
+            opportunities across school offices.
+          </li>
+
+          <li>
+            <strong>Academic Scholarship Program:</strong>
+            Tuition discounts from 50% to 100%, based on GWA:
+            1.00–1.20 for 100%, 1.30–1.50 for 75%, and
+            1.60–1.80 for 50%.
+          </li>
+        </ul>
+
+      </div>
+    </section>
+
+    <aside class="right-spacer">
+      <div class="transparent-login-box">
+        <div class="login-card">
+
+          <h2>Welcome Back</h2>
+
+          <p>Sign in to access your portal account.</p>
+
+          <p
+            class="form-message"
+            id="form-message"
+            role="status"
+            aria-live="polite"
+            hidden>
+          </p>
+
+          <form
+            class="auth-form"
+            id="login-form"
+            action="/login"
+            method="post"
+            autocomplete="off">
+
+            <label for="username">Gmail Address</label>
+
+<input
+  id="username"
+  name="username"
+  type="text"
+  maxlength="254"
+  autocomplete="username"
+  autocapitalize="none"
+  spellcheck="false"
+  required>
+
+            <label for="password">Password</label>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              maxlength="256"
+              autocomplete="new-password"
+              required>
+
+            <button class="btn-login" type="submit">
+              Log In to Portal
+            </button>
+          </form>
+
+          <a class="btn-register" href="/register">
+            Register New Account
+          </a>
+
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>&copy; 2026 St. Cecilia's College</span>
+      <span>Student Portal</span>
+    </div>
+  </footer>
+
+  <script>
+    "use strict";
+
+    const loginForm = document.getElementById("login-form");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const message = document.getElementById("form-message");
+
+    /*
+      Clear login fields whenever this page is displayed,
+      including when the browser restores it from history.
+    */
+    function clearLoginFields() {
+      usernameInput.value = "";
+      passwordInput.value = "";
+    }
+
+    window.addEventListener("pageshow", function () {
+      clearLoginFields();
+    });
+
+    /*
+      Clear the password after the form has been submitted.
+      The browser will still send the submitted value to /login.
+    */
+    loginForm.addEventListener("submit", function () {
+      window.setTimeout(function () {
+        passwordInput.value = "";
+      }, 0);
+    });
+
+    /*
+      Display login status messages from the server.
+    */
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("error")) {
+      message.textContent =
+        "The username or password is incorrect, or the account is not active.";
+      message.hidden = false;
+    } else if (params.has("registered")) {
+      message.textContent =
+        "Account created. You can now log in.";
+      message.hidden = false;
+    }
+  </script>
+
+</body>
+</html>

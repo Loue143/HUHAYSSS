@@ -1,0 +1,1458 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Worker Dashboard | St. Cecilia's College</title>
+
+  <!-- Shared site styling -->
+  <link rel="stylesheet" href="/CSS/Style.CSS">
+
+  <style>
+    :root {
+      --red: #963024;
+      --red-dark: #81271e;
+      --navy: #173f70;
+      --text: #263b53;
+      --muted: #71839d;
+      --border: #dedede;
+      --background: #f7f7f7;
+      --white: #ffffff;
+      --green: #16865e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--white);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* DASHBOARD LAYOUT */
+    .dashboard-layout {
+      display: flex;
+      min-height: calc(100vh - 79px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      flex: 0 0 260px;
+      width: 260px;
+      background: #f6f6f6;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar-heading {
+      min-height: 111px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 20px 12px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      padding-top: 12px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      min-height: 61px;
+      padding: 16px 27px;
+      border: 0;
+      border-left: 4px solid transparent;
+      color: #35465a;
+      background: transparent;
+      text-decoration: none;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-link:hover {
+      background: #eee9e8;
+      color: var(--red);
+    }
+
+    .nav-link.active {
+      background: var(--red);
+      border-left-color: var(--red);
+      color: var(--white);
+    }
+
+    .nav-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      flex: 0 0 20px;
+      font-size: 17px;
+    }
+
+    .nav-link.logout {
+      margin-top: 8px;
+    }
+
+    /* RETRACTABLE GRANTEES MENU */
+    .grantees-menu {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grantees-toggle {
+      font-family: inherit;
+    }
+
+    .grantees-toggle[aria-expanded="true"] {
+      color: var(--red);
+      background: #eee9e8;
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.2s ease;
+    }
+
+    .grantees-toggle[aria-expanded="true"] .chevron {
+      transform: rotate(90deg);
+    }
+
+    .scholarship-submenu {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 5px 8px 9px 18px;
+      background: #efefef;
+    }
+
+    .scholarship-submenu[hidden] {
+      display: none;
+    }
+
+    .scholarship-link {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      border: 0;
+      border-left: 3px solid transparent;
+      background: transparent;
+      color: #435268;
+      text-align: left;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .scholarship-link:hover,
+    .scholarship-link.active {
+      border-left-color: var(--red);
+      background: var(--white);
+      color: var(--red);
+    }
+
+    .nav-link:focus-visible,
+    .scholarship-link:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: -2px;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      padding: 34px 32px 42px;
+    }
+
+    .page-eyebrow {
+      margin: 0 0 7px;
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+    }
+
+    .page-title {
+      margin: 0 0 12px;
+      color: #151515;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 3vw, 38px);
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .page-description {
+      max-width: 850px;
+      margin: 0 0 27px;
+      color: #697b91;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* SUMMARY CARDS */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .summary-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      padding: 19px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--white);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.025);
+    }
+
+    .summary-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 47px;
+      height: 47px;
+      flex: 0 0 47px;
+      border-radius: 11px;
+      background: #f5e9e7;
+      color: var(--red);
+      font-size: 21px;
+    }
+
+    .summary-label {
+      margin: 0 0 6px;
+      color: #62748a;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .summary-number {
+      color: var(--red);
+      font-size: 27px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    /* CONTENT PANEL */
+    .content-panel {
+      min-width: 0;
+      padding: 23px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--white);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.025);
+    }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      margin: 0 0 6px;
+      color: #202020;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    .panel-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .panel-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-input {
+      width: 245px;
+      max-width: 100%;
+      height: 40px;
+      padding: 0 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      color: var(--text);
+      background: var(--white);
+      font-size: 12px;
+    }
+
+    .search-input:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(150, 48, 36, 0.08);
+    }
+
+    /* GRANTEE TABLE */
+    .table-scroll {
+      width: 100%;
+      max-height: 420px;
+      overflow: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 9px;
+    }
+
+    .grantees-table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+    }
+
+    .grantees-table th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 14px 13px;
+      border-bottom: 1px solid #e1e1e1;
+      background: #f5f5f5;
+      color: #5b6674;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .grantees-table td {
+      padding: 15px 13px;
+      border-bottom: 1px solid #ededed;
+      background: var(--white);
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    .grantees-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .grantees-table tbody tr:hover td {
+      background: #fcf8f7;
+    }
+
+    .student-name {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-approved {
+      color: #167344;
+      background: #e3f5e9;
+    }
+
+    .status-pending {
+      color: #9a6500;
+      background: #fff2d8;
+    }
+
+    .status-rejected {
+      color: #a12b2b;
+      background: #fde8e7;
+    }
+
+    .view-button {
+      padding: 8px 12px;
+      border: 1px solid #ead1ce;
+      border-radius: 6px;
+      background: var(--white);
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .view-button:hover {
+      background: #fbefed;
+    }
+
+    .empty-row {
+      padding: 28px !important;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .table-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* PROFILE */
+    .profile-card {
+      max-width: 650px;
+    }
+
+    .profile-avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 22px;
+      border-radius: 12px;
+      background: #f5e9e7;
+      font-size: 28px;
+    }
+
+    .profile-field {
+      margin-bottom: 18px;
+    }
+
+    .profile-field label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .profile-input {
+      width: 100%;
+      height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafafa;
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .profile-help {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* NOTICE */
+    .notice {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border: 1px solid #f0c6c1;
+      border-radius: 8px;
+      background: #fff5f4;
+      color: #a12b2b;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .notice.visible {
+      display: block;
+    }
+
+    /* DETAILS AND LOGOUT DIALOGS */
+    .details-dialog {
+      width: min(440px, calc(100% - 30px));
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 26px;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      color: var(--text);
+      background: var(--white);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .details-dialog::backdrop {
+      background: rgba(20, 20, 20, 0.48);
+      backdrop-filter: blur(3px);
+    }
+
+    .dialog-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: #f8e9e7;
+      color: var(--red);
+      font-size: 26px;
+    }
+
+    .details-dialog h2 {
+      margin: 0 0 12px;
+      color: #202020;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .dialog-description {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+    }
+
+    .detail-row span:first-child {
+      color: var(--muted);
+    }
+
+    .detail-row span:last-child {
+      max-width: 65%;
+      font-weight: 600;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 23px;
+    }
+
+    .dialog-button {
+      min-width: 112px;
+      min-height: 40px;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #f5f5f5;
+      color: #35465a;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .dialog-button.primary {
+      border-color: var(--red);
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .dialog-button.primary:hover {
+      border-color: var(--red-dark);
+      background: var(--red-dark);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1000px) {
+      .sidebar {
+        flex-basis: 230px;
+        width: 230px;
+      }
+
+      .main-content {
+        padding: 28px 22px;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .summary-card:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .dashboard-layout {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-heading {
+        min-height: auto;
+        justify-content: flex-start;
+        padding: 15px 20px;
+      }
+
+      .sidebar-nav {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding: 0;
+      }
+
+      .grantees-menu {
+        min-width: 0;
+      }
+
+      .nav-link {
+        justify-content: center;
+        gap: 7px;
+        min-height: 52px;
+        padding: 12px 5px;
+        border-left: none;
+        font-size: 11px;
+      }
+
+      .nav-link.logout {
+        margin-top: 0;
+      }
+
+      .scholarship-submenu {
+        position: relative;
+        z-index: 5;
+        grid-column: 1 / -1;
+        padding: 6px;
+      }
+
+      .main-content {
+        padding: 25px 15px 30px;
+      }
+
+      .page-title {
+        font-size: 31px;
+      }
+
+      .content-panel {
+        padding: 16px;
+      }
+
+      .panel-heading {
+        align-items: flex-start;
+      }
+
+      .panel-tools {
+        width: 100%;
+      }
+
+      .search-input {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 11px;
+        margin-bottom: 20px;
+      }
+
+      .summary-card:last-child {
+        grid-column: auto;
+      }
+
+      .summary-card {
+        padding: 15px;
+      }
+
+      .panel-title {
+        font-size: 22px;
+      }
+
+      .nav-link {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .dialog-actions {
+        flex-direction: column-reverse;
+      }
+
+      .dialog-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SHARED HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="site-brand">St. Cecilia's College</a>
+      <span class="site-label">Student Portal</span>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-heading">WORKER</div>
+
+      <nav class="sidebar-nav" aria-label="Worker navigation">
+
+        <div class="grantees-menu">
+          <button
+            type="button"
+            class="nav-link grantees-toggle"
+            id="granteesToggle"
+            aria-expanded="false"
+            aria-controls="scholarshipSubmenu">
+
+            <span class="nav-icon" aria-hidden="true">🎓</span>
+            <span>Grantees</span>
+            <span class="chevron" aria-hidden="true">›</span>
+          </button>
+
+          <div class="scholarship-submenu" id="scholarshipSubmenu" hidden>
+
+            <button
+              type="button"
+              class="scholarship-link active"
+              data-program="all">
+              All Grantees
+            </button>
+
+            <button
+              type="button"
+              class="scholarship-link"
+              data-program="Employee's Dependents Scholarship">
+              Employee's Dependents Scholarship (Admin Scholar)
+            </button>
+
+            <button
+              type="button"
+              class="scholarship-link"
+              data-program="Tuition Fee Discount for Other Relatives">
+              Tuition Fee Discount for Other Relatives
+            </button>
+
+            <button
+              type="button"
+              class="scholarship-link"
+              data-program="Sports and Athletics Scholarship">
+              Sports and Athletics Scholarship
+            </button>
+
+            <button
+              type="button"
+              class="scholarship-link"
+              data-program="UniFAST Scholarship">
+              UniFAST Scholarship
+            </button>
+
+            <button
+              type="button"
+              class="scholarship-link"
+              data-program="Working Scholar Program">
+              Working Scholar Program
+            </button>
+
+            <button
+              type="button"
+              class="scholarship-link"
+              data-program="Academic Scholarship Program">
+              Academic Scholarship Program
+            </button>
+
+          </div>
+        </div>
+
+        <button type="button" class="nav-link" id="profileButton">
+          <span class="nav-icon" aria-hidden="true">👤</span>
+          <span>Profile</span>
+        </button>
+
+        <button
+          type="button"
+          class="nav-link logout"
+          id="logoutLink"
+          aria-haspopup="dialog">
+          <span class="nav-icon" aria-hidden="true">↪</span>
+          <span>Log Out</span>
+        </button>
+
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <p class="page-eyebrow">ST. CECILIA'S COLLEGE</p>
+
+      <h1 class="page-title" id="pageTitle">Worker Dashboard</h1>
+
+      <p class="page-description" id="pageDescription">
+        Review scholarship applications and view grantee records.
+      </p>
+
+      <div class="notice" id="notice" role="alert" aria-live="assertive"></div>
+
+      <!-- SUMMARY CARDS -->
+      <section
+        class="summary-grid"
+        id="summaryGrid"
+        aria-label="Grantee statistics">
+
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">🎓</div>
+          <div>
+            <p class="summary-label">Total Grantees</p>
+            <strong class="summary-number" id="totalGrantees">0</strong>
+          </div>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">✓</div>
+          <div>
+            <p class="summary-label">Approved</p>
+            <strong class="summary-number" id="approvedGrantees">0</strong>
+          </div>
+        </article>
+
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">◷</div>
+          <div>
+            <p class="summary-label">Pending Review</p>
+            <strong class="summary-number" id="pendingGrantees">0</strong>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- GRANTEES TABLE -->
+      <section class="content-panel" id="granteesPanel">
+
+        <div class="panel-heading">
+          <div>
+            <h2 class="panel-title" id="panelTitle">All Grantees</h2>
+            <p class="panel-description" id="panelDescription">
+              View student grant records and their current application status.
+            </p>
+          </div>
+
+          <div class="panel-tools">
+            <input
+              class="search-input"
+              type="search"
+              id="granteeSearch"
+              placeholder="Search grantees..."
+              aria-label="Search grantees">
+          </div>
+        </div>
+
+        <div
+          class="table-scroll"
+          tabindex="0"
+          aria-label="Scrollable grantee records">
+
+          <table class="grantees-table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Student Name</th>
+                <th scope="col">Student ID</th>
+                <th scope="col">Grant Program</th>
+                <th scope="col">Status</th>
+                <th scope="col">Details</th>
+              </tr>
+            </thead>
+
+            <tbody id="granteesTableBody">
+              <tr>
+                <td colspan="6" class="empty-row">
+                  Loading grantee records...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div class="table-footer">
+          <span id="tableCount">Loading records...</span>
+          <span>Worker View</span>
+        </div>
+
+      </section>
+
+      <!-- PROFILE SECTION -->
+      <section class="content-panel profile-card" id="profilePanel" hidden>
+
+        <div class="panel-heading">
+          <div>
+            <h2 class="panel-title">My Profile</h2>
+            <p class="panel-description">
+              View your worker portal account information.
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-avatar" aria-hidden="true">👤</div>
+
+        <div class="profile-field">
+          <label for="profileRole">Account Role</label>
+          <input
+            class="profile-input"
+            id="profileRole"
+            value="Worker"
+            readonly>
+        </div>
+
+        <div class="profile-field">
+          <label for="profileEmail">Gmail Address</label>
+          <input
+            class="profile-input"
+            id="profileEmail"
+            value="Not available"
+            readonly>
+        </div>
+
+        <p class="profile-help">
+          Your email will appear here when the worker login session
+          is connected to the profile API.
+        </p>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>St. Cecilia's College</span>
+      <span>Student Portal · Worker Dashboard</span>
+    </div>
+  </footer>
+
+  <!-- GRANTEE DETAILS DIALOG -->
+  <dialog class="details-dialog" id="detailsDialog">
+    <h2>Grantee Details</h2>
+    <div id="granteeDetails"></div>
+
+    <div class="dialog-actions">
+      <button type="button" class="dialog-button" id="closeDetails">
+        Close
+      </button>
+    </div>
+  </dialog>
+
+  <!-- LOGOUT CONFIRMATION DIALOG -->
+  <dialog class="details-dialog" id="logoutDialog">
+    <div class="dialog-icon" aria-hidden="true">↪</div>
+
+    <h2>Confirm Log Out</h2>
+
+    <p class="dialog-description">
+      Are you sure you want to log out of your account?
+      You will need to sign in again to access the worker dashboard.
+    </p>
+
+    <div class="dialog-actions">
+      <button type="button" class="dialog-button" id="cancelLogout">
+        Cancel
+      </button>
+
+      <button type="button" class="dialog-button primary" id="confirmLogout">
+        Yes, Log Out
+      </button>
+    </div>
+  </dialog>
+
+  <script>
+    "use strict";
+
+    const API_URL = "/api/grantees";
+    const LOGOUT_URL = "/worker-logout";
+
+    const granteesToggle = document.getElementById("granteesToggle");
+    const scholarshipSubmenu = document.getElementById("scholarshipSubmenu");
+
+    const scholarshipButtons = [
+      ...document.querySelectorAll(".scholarship-link")
+    ];
+
+    const granteesPanel = document.getElementById("granteesPanel");
+    const profilePanel = document.getElementById("profilePanel");
+    const summaryGrid = document.getElementById("summaryGrid");
+
+    const tableBody = document.getElementById("granteesTableBody");
+    const searchInput = document.getElementById("granteeSearch");
+    const tableCount = document.getElementById("tableCount");
+    const notice = document.getElementById("notice");
+
+    const detailsDialog = document.getElementById("detailsDialog");
+    const logoutDialog = document.getElementById("logoutDialog");
+    const logoutButton = document.getElementById("confirmLogout");
+
+    let grantees = [];
+    let selectedProgram = "all";
+    let loadFailed = false;
+
+    /* Safely encode database values before inserting them into HTML. */
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[character]);
+    }
+
+    function showNotice(message) {
+      notice.textContent = message;
+      notice.classList.add("visible");
+    }
+
+    function hideNotice() {
+      notice.textContent = "";
+      notice.classList.remove("visible");
+    }
+
+    function normalizeStatus(value) {
+      const status = String(value ?? "Pending").trim().toLowerCase();
+
+      if (status === "approved") return "Approved";
+      if (status === "rejected") return "Rejected";
+
+      return "Pending";
+    }
+
+    /* Accept common field names used by the Flask backend. */
+    function normalizeGrantee(item) {
+      return {
+        id:
+          item.id ??
+          item.application_id ??
+          item.Application_ID ??
+          item.U_ID ??
+          item.student_id ??
+          item.Student_ID ??
+          "",
+
+        name:
+          item.name ??
+          item.full_name ??
+          item.student_name ??
+          item.U_Name ??
+          item.Student_Name ??
+          "Unnamed Student",
+
+        studentId:
+          item.studentId ??
+          item.student_id ??
+          item.Student_ID ??
+          item.student_number ??
+          item.Student_Number ??
+          "—",
+
+        program:
+          item.program ??
+          item.scholarship_name ??
+          item.Scholarship_Name ??
+          item.scholarship ??
+          item.grant_program ??
+          item.Grant_Program ??
+          "—",
+
+        status: normalizeStatus(
+          item.status ?? item.Status ?? item.U_Status
+        )
+      };
+    }
+
+    function getStatusClass(status) {
+      switch (String(status).toLowerCase()) {
+        case "approved":
+          return "status-approved";
+        case "rejected":
+          return "status-rejected";
+        default:
+          return "status-pending";
+      }
+    }
+
+    function getProgramRecords() {
+      if (selectedProgram === "all") {
+        return grantees;
+      }
+
+      const target = selectedProgram.trim().toLowerCase();
+
+      return grantees.filter(item =>
+        item.program.trim().toLowerCase().includes(target)
+      );
+    }
+
+    function updateStatistics(records) {
+      document.getElementById("totalGrantees").textContent =
+        records.length;
+
+      document.getElementById("approvedGrantees").textContent =
+        records.filter(item => item.status === "Approved").length;
+
+      document.getElementById("pendingGrantees").textContent =
+        records.filter(item => item.status === "Pending").length;
+    }
+
+    function renderGrantees() {
+      const query = searchInput.value.trim().toLowerCase();
+      const programRecords = getProgramRecords();
+
+      const filtered = programRecords.filter(item => {
+        const searchableText =
+          `${item.name} ${item.studentId} ${item.program} ${item.status}`
+            .toLowerCase();
+
+        return searchableText.includes(query);
+      });
+
+      tableBody.innerHTML = "";
+
+      if (!filtered.length) {
+        const message = loadFailed
+          ? "Unable to load records. Check the connection and try again."
+          : grantees.length
+            ? "No grantee records match your search or selected program."
+            : "No grantee records were returned by the database.";
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 6;
+        cell.className = "empty-row";
+        cell.textContent = message;
+
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+      } else {
+        filtered.forEach((item, index) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td class="student-name">${escapeHTML(item.name)}</td>
+            <td>${escapeHTML(item.studentId)}</td>
+            <td>${escapeHTML(item.program)}</td>
+            <td>
+              <span class="status ${getStatusClass(item.status)}">
+                ${escapeHTML(item.status)}
+              </span>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="view-button"
+                data-grantee-id="${escapeHTML(item.id)}">
+                View
+              </button>
+            </td>
+          `;
+
+          tableBody.appendChild(row);
+        });
+      }
+
+      tableCount.textContent =
+        `Showing ${filtered.length} of ${programRecords.length} grantees`;
+
+      updateStatistics(programRecords);
+    }
+
+    function showSection(section) {
+      const isProfile = section === "profile";
+
+      granteesPanel.hidden = isProfile;
+      summaryGrid.hidden = isProfile;
+      profilePanel.hidden = !isProfile;
+
+      document.getElementById("pageTitle").textContent =
+        isProfile ? "My Profile" : "Worker Dashboard";
+
+      document.getElementById("pageDescription").textContent =
+        isProfile
+          ? "View your worker portal account information."
+          : "Review scholarship applications and view grantee records.";
+
+      document.getElementById("profileButton").classList.toggle(
+        "active",
+        isProfile
+      );
+
+      granteesToggle.classList.toggle("active", !isProfile);
+    }
+
+    /* Expand or retract the scholarship submenu. */
+    granteesToggle.addEventListener("click", () => {
+      const expanded =
+        granteesToggle.getAttribute("aria-expanded") === "true";
+
+      granteesToggle.setAttribute("aria-expanded", String(!expanded));
+      scholarshipSubmenu.hidden = expanded;
+
+      showSection("grantees");
+    });
+
+    /* Filter records by scholarship program. */
+    scholarshipButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        selectedProgram = button.dataset.program;
+
+        scholarshipButtons.forEach(item => {
+          item.classList.toggle("active", item === button);
+        });
+
+        document.getElementById("panelTitle").textContent =
+          selectedProgram === "all"
+            ? "All Grantees"
+            : button.textContent.trim();
+
+        document.getElementById("panelDescription").textContent =
+          selectedProgram === "all"
+            ? "View student grant records and their current application status."
+            : "View grantee records for the selected scholarship program.";
+
+        showSection("grantees");
+        renderGrantees();
+      });
+    });
+
+    /* Profile navigation. */
+    document.getElementById("profileButton").addEventListener("click", () => {
+      showSection("profile");
+    });
+
+    /* Search within the currently selected program. */
+    searchInput.addEventListener("input", renderGrantees);
+
+    /* Open grantee details. */
+    tableBody.addEventListener("click", event => {
+      const button = event.target.closest("[data-grantee-id]");
+
+      if (!button) return;
+
+      const grantee = grantees.find(
+        item => String(item.id) === button.dataset.granteeId
+      );
+
+      if (!grantee) {
+        showNotice("The selected grantee record could not be found.");
+        return;
+      }
+
+      document.getElementById("granteeDetails").innerHTML = `
+        <div class="detail-row">
+          <span>Student Name</span>
+          <span>${escapeHTML(grantee.name)}</span>
+        </div>
+        <div class="detail-row">
+          <span>Student ID</span>
+          <span>${escapeHTML(grantee.studentId)}</span>
+        </div>
+        <div class="detail-row">
+          <span>Scholarship</span>
+          <span>${escapeHTML(grantee.program)}</span>
+        </div>
+        <div class="detail-row">
+          <span>Application Status</span>
+          <span>${escapeHTML(grantee.status)}</span>
+        </div>
+      `;
+
+      if (!detailsDialog.open) {
+        detailsDialog.showModal();
+      }
+    });
+
+    document.getElementById("closeDetails").addEventListener("click", () => {
+      detailsDialog.close();
+    });
+
+    detailsDialog.addEventListener("click", event => {
+      if (event.target === detailsDialog) {
+        detailsDialog.close();
+      }
+    });
+
+    /* Load records from the Flask API. */
+    async function loadGrantees() {
+      hideNotice();
+      loadFailed = false;
+
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="6" class="empty-row">
+            Loading grantee records...
+          </td>
+        </tr>
+      `;
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "GET",
+          headers: {
+            "Accept": "application/json"
+          },
+          credentials: "same-origin",
+          cache: "no-store"
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(
+            data?.error || `Request failed (HTTP ${response.status}).`
+          );
+        }
+
+        const records = Array.isArray(data)
+          ? data
+          : (
+              data?.grantees ??
+              data?.applications ??
+              data?.records ??
+              null
+            );
+
+        if (!Array.isArray(records)) {
+          throw new Error(
+            "The grantee API returned an unexpected data format."
+          );
+        }
+
+        grantees = records.map(normalizeGrantee);
+        loadFailed = false;
+
+        renderGrantees();
+
+      } catch (error) {
+        grantees = [];
+        loadFailed = true;
+        renderGrantees();
+
+        showNotice(
+          `${error.message} Check that the Flask server provides ${API_URL}.`
+        );
+      }
+    }
+
+    /* Logout confirmation. */
+    document.getElementById("logoutLink").addEventListener("click", () => {
+      if (!logoutDialog.open) {
+        logoutDialog.showModal();
+      }
+    });
+
+    document.getElementById("cancelLogout").addEventListener("click", () => {
+      logoutDialog.close();
+    });
+
+    logoutDialog.addEventListener("click", event => {
+      if (event.target === logoutDialog) {
+        logoutDialog.close();
+      }
+    });
+
+    logoutDialog.addEventListener("cancel", () => {
+      logoutButton.disabled = false;
+      logoutButton.textContent = "Yes, Log Out";
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      logoutButton.disabled = true;
+      logoutButton.textContent = "Logging Out...";
+      hideNotice();
+
+      try {
+        const response = await fetch(LOGOUT_URL, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Accept": "application/json"
+          },
+          redirect: "follow"
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Unable to log out (HTTP ${response.status}).`
+          );
+        }
+
+        /*
+          A successful logout should invalidate the worker's
+          server-side session in Flask before redirecting.
+        */
+        window.location.replace("/");
+
+      } catch (error) {
+        if (logoutDialog.open) {
+          logoutDialog.close();
+        }
+
+        showNotice(
+          `${error.message} Verify that your Flask app has a working ${LOGOUT_URL} route.`
+        );
+
+        logoutButton.disabled = false;
+        logoutButton.textContent = "Yes, Log Out";
+      }
+    });
+
+    /* Initial page load. */
+    loadGrantees();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,421 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Register | St. Cecilia's College</title>
+
+  <link rel="stylesheet" href="/CSS/Style.CSS">
+
+  <style>
+    /* REGISTRATION SCREEN */
+    body:has(.registration-page) {
+      width: 100%;
+      min-width: 320px;
+      min-height: 100vh;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    /* MAIN AREA */
+    .registration-page {
+      width: 100%;
+      height: calc(
+        100vh -
+        var(--header-height) -
+        var(--footer-height)
+      );
+      min-height: 0;
+      flex: 1 1 auto;
+      margin: 0;
+      padding: 24px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* REGISTRATION CARD */
+    .registration-page .login-card {
+      width: 100%;
+      max-width: 430px;
+      margin: 0;
+      padding: 30px 34px;
+      background: rgba(15, 20, 18, 0.70);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.30);
+      color: #ffffff;
+    }
+
+    /* TITLE */
+    .registration-page .login-card h1 {
+      margin: 0 0 8px;
+      color: #ffffff;
+      font-family: var(--serif);
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    /* DESCRIPTION */
+    .registration-description {
+      margin: 0 0 18px;
+      color: rgba(255, 255, 255, 0.90);
+      font-size: 11px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    /* FORM */
+    .registration-page .auth-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* LABELS */
+    .registration-page .auth-form label {
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* INPUTS */
+    .registration-page .auth-form input {
+      width: 100%;
+      min-height: 38px;
+      margin: 0 0 5px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.40);
+      border-radius: 0;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+    }
+
+    .registration-page .auth-form input:focus {
+      border-color: #ffffff;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
+    }
+
+    /* STATUS / ERROR MESSAGE */
+    .registration-page .form-message {
+      margin: 0 0 12px;
+      padding: 8px 10px;
+      border-left: 3px solid var(--green);
+      background: rgba(192, 57, 43, 0.55);
+      color: #ffffff;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .registration-page .form-message[hidden] {
+      display: none;
+    }
+
+    .registration-page .form-message.success {
+      border-left-color: #42c78b;
+      background: rgba(17, 134, 94, 0.65);
+    }
+
+    /* CREATE ACCOUNT BUTTON */
+    .registration-page .btn-login {
+      width: 100%;
+      min-height: 40px;
+      margin-top: 4px;
+      padding: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      background: var(--ink);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 160ms ease, transform 160ms ease;
+    }
+
+    .registration-page .btn-login:hover {
+      background: var(--primary-red);
+      transform: translateY(-1px);
+    }
+
+    .registration-page .btn-login:disabled {
+      opacity: 0.65;
+      cursor: wait;
+      transform: none;
+    }
+
+    /* BACK TO LOGIN */
+    .registration-page .btn-register {
+      width: 100%;
+      min-height: 40px;
+      margin-top: 9px;
+      padding: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 160ms ease, transform 160ms ease;
+    }
+
+    .registration-page .btn-register:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* TABLET / SMALL SCREEN */
+    @media (max-width: 600px) {
+      body:has(.registration-page) {
+        height: auto;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .registration-page {
+        height: auto;
+        min-height: calc(
+          100vh -
+          var(--header-height) -
+          var(--footer-height)
+        );
+        padding: 20px 14px;
+        overflow: visible;
+      }
+
+      .registration-page .login-card {
+        max-width: 430px;
+        padding: 26px 22px;
+      }
+
+      .registration-page .login-card h1 {
+        font-size: 27px;
+      }
+    }
+
+    /* VERY SMALL MOBILE */
+    @media (max-width: 380px) {
+      .registration-page {
+        padding: 14px 10px;
+      }
+
+      .registration-page .login-card {
+        padding: 23px 18px;
+      }
+
+      .registration-page .login-card h1 {
+        font-size: 25px;
+      }
+
+      .registration-description {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="site-brand">
+        St. Cecilia's College
+      </a>
+
+      <span class="site-label">
+        Student Portal
+      </span>
+    </div>
+  </header>
+
+  <!-- REGISTRATION MAIN CONTENT -->
+  <main class="registration-page">
+
+    <section class="login-card">
+
+      <h1>Create an Account</h1>
+
+      <p class="registration-description">
+        Create your account to access the
+        St. Cecilia's College Student Portal.
+      </p>
+
+      <!-- STATUS / ERROR MESSAGE -->
+      <p
+        class="form-message"
+        id="form-message"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></p>
+
+      <!-- REGISTRATION FORM -->
+      <form
+        class="auth-form"
+        id="registration-form"
+        action="/register"
+        method="post"
+      >
+
+        <!-- GMAIL ADDRESS -->
+        <label for="email">
+          Gmail Address
+        </label>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          maxlength="254"
+          placeholder="example@gmail.com"
+          autocomplete="email"
+          required
+        >
+
+        <!-- PASSWORD -->
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          name="password"
+          type="password"
+          maxlength="256"
+          autocomplete="new-password"
+          required
+        >
+
+        <!-- CONFIRM PASSWORD -->
+        <label for="confirm-password">
+          Confirm Password
+        </label>
+
+        <input
+          id="confirm-password"
+          name="confirm_password"
+          type="password"
+          maxlength="256"
+          autocomplete="new-password"
+          required
+        >
+
+        <!-- CREATE ACCOUNT -->
+        <button
+          class="btn-login"
+          id="create-account-button"
+          type="submit"
+        >
+          Create Account
+        </button>
+
+      </form>
+
+      <!-- BACK TO LOGIN -->
+      <a class="btn-register" href="/">
+        Back to Log In
+      </a>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>
+        &copy; 2026 St. Cecilia's College
+      </span>
+
+      <span>
+        Student Portal
+      </span>
+    </div>
+  </footer>
+
+  <!-- REGISTRATION VALIDATION AND STATUS -->
+  <script>
+    "use strict";
+
+    const params = new URLSearchParams(window.location.search);
+
+    const message = document.getElementById("form-message");
+    const registrationForm = document.getElementById("registration-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+    const createAccountButton = document.getElementById("create-account-button");
+
+    function showMessage(text, isSuccess = false) {
+      message.textContent = text;
+      message.classList.toggle("success", isSuccess);
+      message.hidden = false;
+    }
+
+    /* DISPLAY SERVER RESPONSE */
+    if (params.get("error") === "exists") {
+      showMessage("This Gmail address is already registered.");
+    } else if (params.get("error") === "invalid") {
+      showMessage("Please check your Gmail address and make sure both passwords match.");
+    } else if (params.get("registered") === "1") {
+      showMessage("Your account was created successfully. You can now log in.", true);
+    } else if (params.has("error")) {
+      showMessage("Registration failed. Please check your details and try again.");
+    }
+
+    /* VALIDATE GMAIL AND PASSWORD MATCHING */
+    registrationForm.addEventListener("submit", function (event) {
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+      const confirmation = confirmPasswordInput.value;
+
+      emailInput.value = email;
+
+      if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(email)) {
+        event.preventDefault();
+        showMessage("Please enter a valid Gmail address ending in @gmail.com.");
+        emailInput.focus();
+        return;
+      }
+
+      if (!password.trim()) {
+        event.preventDefault();
+        showMessage("Please enter a password.");
+        passwordInput.focus();
+        return;
+      }
+
+      if (password !== confirmation) {
+        event.preventDefault();
+        showMessage("The passwords do not match. Please try again.");
+        confirmPasswordInput.focus();
+        return;
+      }
+
+      createAccountButton.disabled = true;
+      createAccountButton.textContent = "Creating Account...";
+    });
+  </script>
+
+</body>
+</html>

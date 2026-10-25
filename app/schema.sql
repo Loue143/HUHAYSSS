@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS "User" (
+    U_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    U_type TEXT,
+    U_user TEXT UNIQUE NOT NULL,
+    U_Pass TEXT NOT NULL,
+    U_Status TEXT DEFAULT 'active'
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_user_username
+    ON "User" (U_user)
+    WHERE U_user IS NOT NULL;

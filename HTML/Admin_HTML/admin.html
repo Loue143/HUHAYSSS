@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | St. Cecilia's College</title>
+  <link rel="stylesheet" href="/CSS/Style.CSS">
+
+  <style>
+    :root {
+      --red: #963024;
+      --red-dark: #81271e;
+      --text: #263b53;
+      --muted: #71839d;
+      --border: #dedede;
+      --light: #f6f6f6;
+      --green: #16865e;
+      --green-bg: #e3f5e9;
+      --yellow: #9a6500;
+      --yellow-bg: #fff2d8;
+      --danger: #a12b2b;
+      --danger-bg: #fde8e7;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button, input { font: inherit; }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
+    }
+
+    .dashboard-layout {
+      display: flex;
+      min-height: calc(100vh - 79px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      flex: 0 0 260px;
+      width: 260px;
+      background: var(--light);
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar-heading {
+      min-height: 111px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 20px 12px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .18em;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      padding-top: 12px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-height: 61px;
+      padding: 16px 27px;
+      color: #35465a;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border: 0;
+      border-left: 4px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+    }
+
+    .nav-link:hover,
+    .nav-link[aria-pressed="true"] {
+      color: var(--red);
+      background: #eee9e8;
+    }
+
+    .nav-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 20px;
+      width: 20px;
+      font-size: 17px;
+    }
+
+    .chevron {
+      margin-left: auto;
+      transition: transform .2s ease;
+    }
+
+    .grantees-toggle[aria-expanded="true"] {
+      color: var(--red);
+      background: #eee9e8;
+    }
+
+    .grantees-toggle[aria-expanded="true"] .chevron {
+      transform: rotate(90deg);
+    }
+
+    .scholarship-submenu {
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      padding: 5px 8px 9px 18px;
+      background: #efefef;
+    }
+
+    .scholarship-submenu.open { display: flex; }
+
+    .scholarship-link {
+      width: 100%;
+      padding: 10px 12px;
+      border: 0;
+      border-left: 3px solid transparent;
+      background: transparent;
+      color: #435268;
+      text-align: left;
+      font-size: 11px;
+      line-height: 1.45;
+      cursor: pointer;
+    }
+
+    .scholarship-link:hover,
+    .scholarship-link.active {
+      border-left-color: var(--red);
+      background: #fff;
+      color: var(--red);
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      padding: 34px 32px 42px;
+    }
+
+    .page-eyebrow {
+      margin: 0 0 7px;
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .13em;
+    }
+
+    .page-title {
+      margin: 0 0 12px;
+      color: #151515;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 3vw, 38px);
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .page-description {
+      max-width: 850px;
+      margin: 0 0 27px;
+      color: #697b91;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* STATISTICS */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .summary-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      padding: 19px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.025);
+    }
+
+    .summary-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 47px;
+      height: 47px;
+      flex: 0 0 47px;
+      border-radius: 11px;
+      background: #f5e9e7;
+      color: var(--red);
+      font-size: 21px;
+    }
+
+    .summary-label {
+      margin: 0 0 6px;
+      color: #62748a;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .summary-number {
+      color: var(--red);
+      font-size: 27px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    /* PANELS */
+    .content-panel {
+      min-width: 0;
+      padding: 23px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.025);
+    }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      margin: 0 0 6px;
+      color: #202020;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-weight: 400;
+    }
+
+    .panel-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .panel-tools {
+      width: 270px;
+      max-width: 100%;
+    }
+
+    .search-input {
+      width: 270px;
+      max-width: 100%;
+      height: 42px;
+      padding: 0 13px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      color: var(--text);
+      background: #fff;
+      font-size: 12px;
+    }
+
+    .search-input:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(150,48,36,.08);
+    }
+
+    .table-scroll {
+      width: 100%;
+      max-height: 470px;
+      overflow: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 9px;
+    }
+
+    .grantees-table {
+      width: 100%;
+      min-width: 1000px;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+    }
+
+    .grantees-table th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 14px 13px;
+      border-bottom: 1px solid #e1e1e1;
+      background: #f5f5f5;
+      color: #5b6674;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .grantees-table td {
+      padding: 14px 13px;
+      border-bottom: 1px solid #ededed;
+      background: #fff;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    .grantees-table tbody tr:last-child td { border-bottom: 0; }
+    .grantees-table tbody tr:hover td { background: #fcf8f7; }
+
+    .student-name {
+      color: #263b53;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status-approved { background: var(--green-bg); color: var(--green); }
+    .status-pending { background: var(--yellow-bg); color: var(--yellow); }
+    .status-rejected { background: var(--danger-bg); color: var(--danger); }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .action-button {
+      padding: 7px 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s, opacity .15s;
+    }
+
+    .action-button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .approve-button {
+      color: #167344;
+      background: #e3f5e9;
+      border-color: #c3e8d0;
+    }
+
+    .approve-button:hover { background: #d2efdc; }
+
+    .reject-button {
+      color: #a12b2b;
+      background: #fde8e7;
+      border-color: #f3cecb;
+    }
+
+    .reject-button:hover { background: #fbd9d7; }
+
+    .view-button {
+      padding: 7px 10px;
+      border: 1px solid #ead1ce;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .view-button:hover { background: #fbefed; }
+
+    .empty-row {
+      padding: 28px !important;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .table-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .notice {
+      display: none;
+      margin: 0 0 18px;
+      padding: 12px 14px;
+      border: 1px solid #ead1ce;
+      border-radius: 8px;
+      background: #fff7f5;
+      color: var(--red-dark);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .notice.visible { display: block; }
+
+    .notice.success {
+      border-color: #c3e8d0;
+      background: #f0faf3;
+      color: #167344;
+    }
+
+    .notice.error {
+      border-color: #f3cecb;
+      background: #fff5f4;
+      color: #a12b2b;
+    }
+
+    /* STAFF VIEW */
+    .staff-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(270px, .8fr);
+      align-items: start;
+      gap: 20px;
+    }
+
+    .staff-table-panel,
+    .add-staff-panel { min-width: 0; }
+
+    .staff-table { min-width: 510px; }
+
+    .staff-summary-grid {
+      grid-template-columns: minmax(200px, 300px);
+      margin-bottom: 22px;
+    }
+
+    .staff-form {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .staff-form label {
+      margin-top: 5px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .staff-form input {
+      width: 100%;
+      min-width: 0;
+      height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .staff-form input:focus {
+      outline: 2px solid rgba(150,48,36,.15);
+      border-color: var(--red);
+    }
+
+    .staff-submit-button {
+      width: 100%;
+      min-height: 43px;
+      margin-top: 10px;
+      padding: 11px 14px;
+      border: 0;
+      border-radius: 7px;
+      background: var(--red);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .staff-submit-button:hover { background: var(--red-dark); }
+
+    .staff-submit-button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .staff-form-hint {
+      margin: 15px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    /* DETAILS DIALOG */
+    .details-dialog {
+      width: min(440px, calc(100% - 30px));
+      padding: 24px;
+      border: 1px solid #ddd;
+      border-radius: 13px;
+      color: var(--text);
+      box-shadow: 0 15px 50px rgba(0,0,0,.2);
+    }
+
+    .details-dialog::backdrop { background: rgba(16,29,45,.45); }
+
+    .details-dialog h2 {
+      margin: 0 0 16px;
+      color: var(--red);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+    }
+
+    .details-dialog p { font-size: 13px; line-height: 1.6; }
+
+    .dialog-close {
+      margin-top: 12px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--red);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* LOGOUT MODAL */
+    .logout-modal {
+      width: min(420px, calc(100% - 30px));
+      max-width: 420px;
+      max-height: calc(100% - 30px);
+      padding: 0;
+      overflow: auto;
+      border: 1px solid #eadfdd;
+      border-radius: 16px;
+      background: #fff;
+      color: var(--text);
+      box-shadow: 0 24px 70px rgba(0,0,0,.25);
+    }
+
+    .logout-modal::backdrop {
+      background: rgba(25,20,20,.58);
+      backdrop-filter: blur(3px);
+    }
+
+    .logout-modal[open] { animation: modalAppear .2s ease-out; }
+
+    @keyframes modalAppear {
+      from { opacity: 0; transform: translateY(10px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .logout-modal-content {
+      padding: 30px 26px 24px;
+      text-align: center;
+    }
+
+    .logout-modal-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: #f8e9e7;
+      color: var(--red);
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .logout-modal-title {
+      margin: 0 0 10px;
+      color: #252525;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+
+    .logout-modal-description {
+      max-width: 315px;
+      margin: 0 auto;
+      color: #71839d;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .logout-modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .logout-modal-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 125px;
+      min-height: 43px;
+      padding: 11px 17px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s ease, transform .2s ease;
+    }
+
+    .logout-modal-button:hover { transform: translateY(-1px); }
+
+    .logout-cancel-button {
+      border-color: #dedede;
+      background: #f5f5f5;
+      color: #35465a;
+    }
+
+    .logout-cancel-button:hover { background: #eaeaea; }
+
+    .logout-confirm-button {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .logout-confirm-button:hover { background: var(--red-dark); }
+
+    .logout-confirm-button:disabled {
+      opacity: .65;
+      cursor: wait;
+      transform: none;
+    }
+
+    .logout-error {
+      display: none;
+      margin: 16px 0 0;
+      padding: 10px 12px;
+      border: 1px solid #f3cecb;
+      border-radius: 7px;
+      background: #fff5f4;
+      color: #a12b2b;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .logout-error.visible { display: block; }
+
+    @media (max-width: 1100px) {
+      .staff-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 1000px) {
+      .sidebar { flex-basis: 220px; width: 220px; }
+      .main-content { padding: 28px 22px; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-card:last-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 700px) {
+      .dashboard-layout { display: block; }
+
+      .sidebar {
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-heading {
+        min-height: auto;
+        justify-content: flex-start;
+        padding: 15px 20px;
+      }
+
+      .sidebar-nav { padding-top: 0; }
+      .nav-link { min-height: 48px; padding: 13px 20px; }
+      .scholarship-submenu { padding-left: 28px; }
+      .main-content { padding: 25px 15px 35px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .summary-card:last-child { grid-column: auto; }
+      .content-panel { padding: 16px; }
+      .search-input, .panel-tools { width: 100%; }
+      .table-footer { align-items: flex-start; flex-direction: column; }
+      .staff-summary-grid { grid-template-columns: 1fr; }
+      .logout-modal-content { padding: 26px 19px 21px; }
+      .logout-modal-title { font-size: 23px; }
+      .logout-modal-actions { flex-direction: column-reverse; }
+      .logout-modal-button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logout-modal[open] { animation: none; }
+      .logout-modal-button { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="site-brand">St. Cecilia's College</a>
+      <span class="site-label">Student Portal</span>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">ADMIN</div>
+
+      <nav class="sidebar-nav" aria-label="Admin navigation">
+        <div class="grantees-menu">
+          <button type="button" class="nav-link grantees-toggle"
+            id="granteesToggle" aria-expanded="false"
+            aria-controls="scholarshipSubmenu">
+            <span class="nav-icon" aria-hidden="true">🎓</span>
+            <span>Grantees</span>
+            <span class="chevron" aria-hidden="true">›</span>
+          </button>
+
+          <div class="scholarship-submenu" id="scholarshipSubmenu" hidden>
+            <button type="button" class="scholarship-link active" data-program="all">
+              All Grantees
+            </button>
+            <button type="button" class="scholarship-link"
+              data-program="Employee's Dependents Scholarship (Admin Scholar)">
+              Employee's Dependents Scholarship (Admin Scholar)
+            </button>
+            <button type="button" class="scholarship-link"
+              data-program="Tuition Fee Discount for Other Relatives">
+              Tuition Fee Discount for Other Relatives
+            </button>
+            <button type="button" class="scholarship-link"
+              data-program="Sports and Athletics Scholarship">
+              Sports and Athletics Scholarship
+            </button>
+            <button type="button" class="scholarship-link"
+              data-program="UniFAST Scholarship">UniFAST Scholarship</button>
+            <button type="button" class="scholarship-link"
+              data-program="Working Scholar Program">Working Scholar Program</button>
+            <button type="button" class="scholarship-link"
+              data-program="Academic Scholarship Program">Academic Scholarship Program</button>
+          </div>
+        </div>
+
+        <button type="button" class="nav-link" id="staffButton"
+          aria-controls="staffSection" aria-pressed="false">
+          <span class="nav-icon" aria-hidden="true">👥</span>
+          <span>Staff</span>
+        </button>
+
+        <a href="/profile.html" class="nav-link">
+          <span class="nav-icon" aria-hidden="true">👤</span>
+          <span>Profile</span>
+        </a>
+
+        <button type="button" class="nav-link" id="logoutLink"
+          aria-haspopup="dialog" aria-controls="logoutConfirmation">
+          <span class="nav-icon" aria-hidden="true">↪</span>
+          <span>Log Out</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- GRANTEES VIEW -->
+    <main class="main-content" id="granteesView">
+      <p class="page-eyebrow">ST. CECILIA'S COLLEGE</p>
+      <h1 class="page-title">Admin Dashboard</h1>
+      <p class="page-description">
+        Manage scholarship applications, review student records, and approve
+        or reject applications for each scholarship program.
+      </p>
+
+      <div class="notice" id="notice" role="status" aria-live="polite"></div>
+
+      <section class="summary-grid" aria-label="Grantee statistics">
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">🎓</div>
+          <div>
+            <p class="summary-label">Total Grantees</p>
+            <strong class="summary-number" id="totalGrantees">0</strong>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">✓</div>
+          <div>
+            <p class="summary-label">Approved</p>
+            <strong class="summary-number" id="approvedGrantees">0</strong>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">◷</div>
+          <div>
+            <p class="summary-label">Pending Review</p>
+            <strong class="summary-number" id="pendingGrantees">0</strong>
+          </div>
+        </article>
+      </section>
+
+      <section class="content-panel">
+        <div class="panel-heading">
+          <div>
+            <h2 class="panel-title" id="granteePanelTitle">All Grantees</h2>
+            <p class="panel-description" id="panelDescription">
+              Review applications and update their statuses.
+            </p>
+          </div>
+          <div class="panel-tools">
+            <input class="search-input" type="search" id="granteeSearch"
+              placeholder="Search grantees..." aria-label="Search grantees">
+          </div>
+        </div>
+
+        <div class="table-scroll" tabindex="0" aria-label="Scrollable grantee records">
+          <table class="grantees-table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Student Name</th>
+                <th scope="col">Student ID</th>
+                <th scope="col">Grant Program</th>
+                <th scope="col">Status</th>
+                <th scope="col">Update Status</th>
+                <th scope="col">Details</th>
+              </tr>
+            </thead>
+            <tbody id="granteesTableBody">
+              <tr>
+                <td colspan="7" class="empty-row">Loading records from the database...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span id="tableCount">Loading records...</span>
+          <span>Admin View</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- STAFF VIEW -->
+    <main class="main-content" id="staffSection" hidden>
+      <p class="page-eyebrow">ST. CECILIA'S COLLEGE</p>
+      <h1 class="page-title">Staff Management</h1>
+      <p class="page-description">
+        View staff accounts and create new staff login credentials.
+      </p>
+
+      <div class="notice" id="staffNotice" role="status" aria-live="polite"></div>
+
+      <section class="summary-grid staff-summary-grid" aria-label="Staff statistics">
+        <article class="summary-card">
+          <div class="summary-icon" aria-hidden="true">👥</div>
+          <div>
+            <p class="summary-label">Total Staff Members</p>
+            <strong class="summary-number" id="staffTotal">0</strong>
+          </div>
+        </article>
+      </section>
+
+      <div class="staff-layout">
+        <section class="content-panel staff-table-panel">
+          <div class="panel-heading">
+            <div>
+              <h2 class="panel-title">Staff Accounts</h2>
+              <p class="panel-description">Accounts with the user type Staff.</p>
+            </div>
+            <input class="search-input" type="search" id="staffSearch"
+              placeholder="Search Gmail..." aria-label="Search staff accounts">
+          </div>
+
+          <div class="table-scroll" tabindex="0" aria-label="Scrollable staff table">
+            <table class="grantees-table staff-table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Staff ID</th>
+                  <th scope="col">Gmail</th>
+                  <th scope="col">Account Type</th>
+                </tr>
+              </thead>
+              <tbody id="staffTableBody">
+                <tr>
+                  <td colspan="4" class="empty-row">Open Staff to load accounts.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span id="staffTableCount">0 staff members</span>
+            <span>Admin View</span>
+          </div>
+        </section>
+
+        <section class="content-panel add-staff-panel">
+          <div class="panel-heading">
+            <div>
+              <h2 class="panel-title">Add Staff Account</h2>
+              <p class="panel-description">
+                Create a staff login using Gmail and password.
+              </p>
+            </div>
+          </div>
+
+          <form id="addStaffForm" class="staff-form">
+            <label for="staffGmail">Gmail Address</label>
+            <input type="email" id="staffGmail" name="email"
+              placeholder="example@gmail.com" autocomplete="email"
+              maxlength="254"
+              pattern="[a-zA-Z0-9._%+-]+@gmail\.com"
+              title="Enter a valid Gmail address ending in @gmail.com" required>
+
+            <label for="staffPassword">Password</label>
+            <input type="password" id="staffPassword" name="password"
+              placeholder="Enter a password" autocomplete="new-password"
+              maxlength="256" required>
+
+            <button type="submit" class="staff-submit-button" id="createStaffButton">
+              Create Staff Account
+            </button>
+          </form>
+
+          <p class="staff-form-hint">
+            The account will be registered with the user type Staff.
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>St. Cecilia's College</span>
+      <span>Student Portal · Admin Dashboard</span>
+    </div>
+  </footer>
+
+  <!-- GRANTEE DETAILS -->
+  <dialog class="details-dialog" id="detailsDialog"
+    aria-labelledby="detailsDialogTitle">
+    <h2 id="detailsDialogTitle">Grantee Details</h2>
+    <div id="granteeDetails"></div>
+    <button type="button" class="dialog-close" id="closeDialog">Close</button>
+  </dialog>
+
+  <!-- LOGOUT CONFIRMATION -->
+  <dialog class="logout-modal" id="logoutConfirmation"
+    aria-labelledby="logoutModalTitle"
+    aria-describedby="logoutModalDescription">
+    <div class="logout-modal-content">
+      <div class="logout-modal-icon" aria-hidden="true">↪</div>
+      <h2 class="logout-modal-title" id="logoutModalTitle">Confirm Log Out</h2>
+      <p class="logout-modal-description" id="logoutModalDescription">
+        Are you sure you want to log out of your account?
+        You will need to sign in again to access the admin dashboard.
+      </p>
+
+      <p class="logout-error" id="logoutError" role="alert" aria-live="assertive"></p>
+
+      <div class="logout-modal-actions">
+        <button type="button" class="logout-modal-button logout-cancel-button"
+          id="cancelLogout" autofocus>Cancel</button>
+        <button type="button" class="logout-modal-button logout-confirm-button"
+          id="confirmLogout">Yes, Log Out</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    "use strict";
+
+    /*
+      These URLs must match the routes in app.py.
+      All requests use the existing login session.
+    */
+    const API_URL = "/api/grantees";
+    const UPDATE_STATUS_URL = "/api/grantees/update-status";
+    const STAFF_API_URL = "/api/staff";
+    const LOGOUT_URL = "/admin-logout";
+
+    let grantees = [];
+    let selectedProgram = "all";
+    let isLoading = false;
+    let staffAccounts = [];
+    let staffRequestInProgress = false;
+
+    const tableBody = document.getElementById("granteesTableBody");
+    const searchInput = document.getElementById("granteeSearch");
+    const tableCount = document.getElementById("tableCount");
+    const detailsDialog = document.getElementById("detailsDialog");
+    const detailsContent = document.getElementById("granteeDetails");
+    const granteesToggle = document.getElementById("granteesToggle");
+    const scholarshipSubmenu = document.getElementById("scholarshipSubmenu");
+    const notice = document.getElementById("notice");
+    const granteesView = document.getElementById("granteesView");
+    const staffButton = document.getElementById("staffButton");
+    const staffSection = document.getElementById("staffSection");
+    const staffTableBody = document.getElementById("staffTableBody");
+    const staffSearch = document.getElementById("staffSearch");
+    const staffTableCount = document.getElementById("staffTableCount");
+    const staffTotal = document.getElementById("staffTotal");
+    const staffNotice = document.getElementById("staffNotice");
+    const addStaffForm = document.getElementById("addStaffForm");
+    const createStaffButton = document.getElementById("createStaffButton");
+
+    const scholarshipButtons = [
+      ...document.querySelectorAll(".scholarship-link")
+    ];
+
+    const logoutModal = document.getElementById("logoutConfirmation");
+    const logoutLink = document.getElementById("logoutLink");
+    const cancelLogoutButton = document.getElementById("cancelLogout");
+    const confirmLogoutButton = document.getElementById("confirmLogout");
+    const logoutError = document.getElementById("logoutError");
+
+    /* GENERAL HELPERS */
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[character]);
+    }
+
+    async function readResponse(response) {
+      const contentType = response.headers.get("content-type") || "";
+
+      if (contentType.includes("application/json")) {
+        return await response.json();
+      }
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(
+          `Request failed (HTTP ${response.status}). ` +
+          "Check the Flask route and server console."
+        );
+      }
+
+      throw new Error(
+        "The server did not return JSON. Check whether the requested URL " +
+        "is returning an HTML page instead of an API response."
+      );
+    }
+
+    function showNotice(message, type = "error") {
+      notice.textContent = message;
+      notice.className = `notice visible ${type}`;
+    }
+
+    function clearNotice() {
+      notice.textContent = "";
+      notice.className = "notice";
+    }
+
+    function showStaffNotice(message, type = "error") {
+      staffNotice.textContent = message;
+      staffNotice.className = `notice visible ${type}`;
+    }
+
+    function clearStaffNotice() {
+      staffNotice.textContent = "";
+      staffNotice.className = "notice";
+    }
+
+    function normalizeStatus(status) {
+      const value = String(status || "Pending").trim().toLowerCase();
+
+      if (value === "approved") return "Approved";
+      if (value === "rejected") return "Rejected";
+
+      return "Pending";
+    }
+
+    /*
+      Supports common response field names while keeping the
+      existing dashboard table and display unchanged.
+    */
+    function normalizeGrantee(item) {
+      return {
+        id: item.id ?? item.application_id ?? item.Ass_ID ?? item.U_ID ?? "",
+        name: item.name ?? item.full_name ?? item.student_name ?? item.U_user ?? "",
+        studentId: item.studentId ?? item.student_id ?? item.student_number ?? "",
+        program: item.program ?? item.scholarship_name ?? item.scholarship ?? item.grant_program ?? "",
+        status: normalizeStatus(item.status ?? item.application_status ?? item.U_Status ?? "Pending"),
+        email: item.email ?? item.U_Mail ?? "",
+        raw: item
+      };
+    }
+
+    function getProgramRecords() {
+      return selectedProgram === "all"
+        ? grantees
+        : grantees.filter(item => item.program === selectedProgram);
+    }
+
+    function updateStatistics(records) {
+      document.getElementById("totalGrantees").textContent = records.length;
+
+      document.getElementById("approvedGrantees").textContent =
+        records.filter(item => item.status === "Approved").length;
+
+      document.getElementById("pendingGrantees").textContent =
+        records.filter(item => item.status === "Pending").length;
+    }
+
+    function getStatusClass(status) {
+      if (status === "Approved") return "status-approved";
+      if (status === "Rejected") return "status-rejected";
+      return "status-pending";
+    }
+
+    /* GRANTEE TABLE */
+
+    function renderGrantees() {
+      const query = searchInput.value.trim().toLowerCase();
+      const programRecords = getProgramRecords();
+
+      const filteredRecords = programRecords.filter(item =>
+        String(item.name).toLowerCase().includes(query) ||
+        String(item.studentId).toLowerCase().includes(query) ||
+        String(item.program).toLowerCase().includes(query) ||
+        String(item.status).toLowerCase().includes(query) ||
+        String(item.email).toLowerCase().includes(query)
+      );
+
+      if (filteredRecords.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" class="empty-row">${
+              grantees.length === 0
+                ? "No grantee records were returned by the database."
+                : "No grantee records found for this selection."
+            }</td>
+          </tr>`;
+      } else {
+        tableBody.innerHTML = filteredRecords.map((item, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td class="student-name">${escapeHTML(item.name)}</td>
+            <td>${escapeHTML(item.studentId)}</td>
+            <td>${escapeHTML(item.program)}</td>
+            <td>
+              <span class="status ${getStatusClass(item.status)}">
+                ${escapeHTML(item.status)}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button type="button"
+                  class="action-button approve-button"
+                  data-action="approve"
+                  data-grantee-id="${escapeHTML(item.id)}"
+                  ${isLoading || item.status === "Approved" ? "disabled" : ""}>
+                  Approve
+                </button>
+                <button type="button"
+                  class="action-button reject-button"
+                  data-action="reject"
+                  data-grantee-id="${escapeHTML(item.id)}"
+                  ${isLoading || item.status === "Rejected" ? "disabled" : ""}>
+                  Reject
+                </button>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="view-button"
+                data-view-id="${escapeHTML(item.id)}">View</button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      tableCount.textContent =
+        `Showing ${filteredRecords.length} of ${programRecords.length} applications`;
+
+      updateStatistics(programRecords);
+    }
+
+    async function loadGrantees() {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" class="empty-row">Loading records from the database...</td>
+        </tr>`;
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "GET",
+          credentials: "same-origin",
+          headers: { Accept: "application/json" },
+          cache: "no-store"
+        });
+
+        const data = await readResponse(response);
+
+        if (!response.ok) {
+          throw new Error(data.message || "Unable to load grantees.");
+        }
+
+        const records = Array.isArray(data)
+          ? data
+          : data.grantees ?? data.records ?? data.applications;
+
+        if (!Array.isArray(records)) {
+          throw new Error(
+            "The grantee API must return an array of records, " +
+            "or an object containing grantees, records, or applications."
+          );
+        }
+
+        grantees = records.map(normalizeGrantee);
+        clearNotice();
+        renderGrantees();
+      } catch (error) {
+        grantees = [];
+        renderGrantees();
+        showNotice(
+          `${error.message} Check the /api/grantees route in app.py.`,
+          "error"
+        );
+      }
+    }
+
+    async function updateGranteeStatus(id, newStatus) {
+      const grantee = grantees.find(
+        item => String(item.id) === String(id)
+      );
+
+      if (!grantee) {
+        showNotice("The selected application could not be found.");
+        return;
+      }
+
+      if (!["Approved", "Rejected"].includes(newStatus)) {
+        showNotice("Invalid application status.");
+        return;
+      }
+
+      const confirmed = window.confirm(
+        `Are you sure you want to ${newStatus.toLowerCase()} this application?\n\n` +
+        `${grantee.name}\n${grantee.program}`
+      );
+
+      if (!confirmed) return;
+
+      clearNotice();
+      isLoading = true;
+      renderGrantees();
+
+      try {
+        const response = await fetch(UPDATE_STATUS_URL, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            id: grantee.id,
+            status: newStatus
+          })
+        });
+
+        const result = await readResponse(response);
+
+        if (!response.ok || result.success === false) {
+          throw new Error(
+            result.message ||
+            `Unable to save the application status (HTTP ${response.status}).`
+          );
+        }
+
+        /*
+          Update the displayed data only after the server confirms success.
+          Reloading ensures the displayed status reflects the database.
+        */
+        showNotice(
+          result.message ||
+          `Application for ${grantee.name} was ${newStatus.toLowerCase()} successfully.`,
+          "success"
+        );
+
+        await loadGrantees();
+      } catch (error) {
+        showNotice(error.message, "error");
+      } finally {
+        isLoading = false;
+        renderGrantees();
+      }
+    }
+
+    /* DASHBOARD NAVIGATION */
+
+    function switchDashboardView(view) {
+      const showStaff = view === "staff";
+
+      granteesView.hidden = showStaff;
+      staffSection.hidden = !showStaff;
+
+      staffButton.setAttribute("aria-pressed", String(showStaff));
+
+      if (showStaff) {
+        granteesToggle.setAttribute("aria-expanded", "false");
+        scholarshipSubmenu.hidden = true;
+        scholarshipSubmenu.classList.remove("open");
+
+        loadStaffAccounts();
+      } else {
+        clearNotice();
+        renderGrantees();
+      }
+    }
+
+    granteesToggle.addEventListener("click", () => {
+      switchDashboardView("grantees");
+
+      const expanded =
+        granteesToggle.getAttribute("aria-expanded") === "true";
+
+      granteesToggle.setAttribute("aria-expanded", String(!expanded));
+      scholarshipSubmenu.hidden = expanded;
+      scholarshipSubmenu.classList.toggle("open", !expanded);
+    });
+
+    staffButton.addEventListener("click", () => {
+      switchDashboardView("staff");
+    });
+
+    scholarshipButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        selectedProgram = button.dataset.program;
+
+        scholarshipButtons.forEach(item => {
+          item.classList.toggle("active", item === button);
+        });
+
+        const title = selectedProgram === "all"
+          ? "All Grantees"
+          : button.textContent.trim();
+
+        document.getElementById("granteePanelTitle").textContent = title;
+
+        document.getElementById("panelDescription").textContent =
+          selectedProgram === "all"
+            ? "Review applications and update their statuses."
+            : `Review and update applications for ${title}.`;
+
+        searchInput.value = "";
+        clearNotice();
+        renderGrantees();
+      });
+    });
+
+    searchInput.addEventListener("input", renderGrantees);
+
+    /* GRANTEE ACTIONS AND DETAILS */
+
+    tableBody.addEventListener("click", async event => {
+      const actionButton = event.target.closest("[data-action]");
+
+      if (actionButton) {
+        if (actionButton.disabled || isLoading) return;
+
+        const newStatus =
+          actionButton.dataset.action === "approve"
+            ? "Approved"
+            : "Rejected";
+
+        await updateGranteeStatus(
+          actionButton.dataset.granteeId,
+          newStatus
+        );
+
+        return;
+      }
+
+      const viewButton = event.target.closest("[data-view-id]");
+      if (!viewButton) return;
+
+      const grantee = grantees.find(
+        item => String(item.id) === String(viewButton.dataset.viewId)
+      );
+
+      if (!grantee) return;
+
+      detailsContent.innerHTML = `
+        <p><strong>Student Name:</strong> ${escapeHTML(grantee.name)}</p>
+        <p><strong>Student ID:</strong> ${escapeHTML(grantee.studentId)}</p>
+        <p><strong>Grant Program:</strong> ${escapeHTML(grantee.program)}</p>
+        <p><strong>Application Status:</strong> ${escapeHTML(grantee.status)}</p>
+        ${grantee.email
+          ? `<p><strong>Gmail:</strong> ${escapeHTML(grantee.email)}</p>`
+          : ""}
+      `;
+
+      detailsDialog.showModal();
+    });
+
+    document.getElementById("closeDialog").addEventListener("click", () => {
+      detailsDialog.close();
+    });
+
+    detailsDialog.addEventListener("click", event => {
+      if (event.target === detailsDialog) {
+        detailsDialog.close();
+      }
+    });
+
+    /* STAFF ACCOUNTS */
+
+    async function loadStaffAccounts() {
+      if (staffRequestInProgress) return;
+
+      staffRequestInProgress = true;
+
+      staffTableBody.innerHTML = `
+        <tr><td colspan="4" class="empty-row">Loading staff accounts...</td></tr>`;
+
+      try {
+        const response = await fetch(STAFF_API_URL, {
+          method: "GET",
+          credentials: "same-origin",
+          headers: { Accept: "application/json" },
+          cache: "no-store"
+        });
+
+        const data = await readResponse(response);
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+            `Unable to load staff accounts (HTTP ${response.status}).`
+          );
+        }
+
+        const records = Array.isArray(data)
+          ? data
+          : data.staff ?? data.accounts ?? data.records;
+
+        if (!Array.isArray(records)) {
+          throw new Error(
+            "The staff API must return an array or an object containing staff accounts."
+          );
+        }
+
+        staffAccounts = records;
+        renderStaffAccounts();
+        clearStaffNotice();
+      } catch (error) {
+        staffAccounts = [];
+        renderStaffAccounts();
+
+        showStaffNotice(
+          `${error.message} Check the /api/staff route in app.py.`,
+          "error"
+        );
+      } finally {
+        staffRequestInProgress = false;
+      }
+    }
+
+    function renderStaffAccounts() {
+      const query = staffSearch.value.trim().toLowerCase();
+
+      const filtered = staffAccounts.filter(staff => {
+        const email = staff.U_Mail ?? staff.email ?? staff.gmail ?? "";
+        const id = staff.U_ID ?? staff.id ?? "";
+
+        return String(email).toLowerCase().includes(query) ||
+          String(id).toLowerCase().includes(query);
+      });
+
+      staffTotal.textContent = staffAccounts.length;
+
+      if (filtered.length === 0) {
+        staffTableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="empty-row">${
+              staffAccounts.length === 0
+                ? "No staff accounts found."
+                : "No matching staff accounts."
+            }</td>
+          </tr>`;
+      } else {
+        staffTableBody.innerHTML = filtered.map((staff, index) => {
+          const id = staff.U_ID ?? staff.id ?? "";
+          const email = staff.U_Mail ?? staff.email ?? staff.gmail ?? "";
+
+          return `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${escapeHTML(id)}</td>
+              <td>${escapeHTML(email)}</td>
+              <td><span class="status status-approved">Staff</span></td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      staffTableCount.textContent =
+        `Showing ${filtered.length} of ${staffAccounts.length} staff members`;
+    }
+
+    staffSearch.addEventListener("input", renderStaffAccounts);
+
+    addStaffForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (!addStaffForm.reportValidity()) return;
+
+      const email = document.getElementById("staffGmail").value.trim();
+      const password = document.getElementById("staffPassword").value;
+
+      if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(email)) {
+        showStaffNotice(
+          "Enter a valid Gmail address ending in @gmail.com.",
+          "error"
+        );
+        return;
+      }
+
+      if (!password) {
+        showStaffNotice("Please enter a password.", "error");
+        return;
+      }
+
+      createStaffButton.disabled = true;
+      createStaffButton.textContent = "Creating Account...";
+      clearStaffNotice();
+
+      try {
+        const response = await fetch(STAFF_API_URL, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        const result = await readResponse(response);
+
+        if (!response.ok || result.success === false) {
+          throw new Error(
+            result.message ||
+            `Could not create the staff account (HTTP ${response.status}).`
+          );
+        }
+
+        addStaffForm.reset();
+
+        /*
+          Refresh the table after successful creation so the new account
+          appears using the data returned by the database.
+        */
+        await loadStaffAccounts();
+
+        showStaffNotice(
+          result.message || "Staff account created successfully.",
+          "success"
+        );
+      } catch (error) {
+        showStaffNotice(error.message, "error");
+      } finally {
+        createStaffButton.disabled = false;
+        createStaffButton.textContent = "Create Staff Account";
+      }
+    });
+
+    /* LOGOUT CONFIRMATION */
+
+    function openLogoutModal() {
+      logoutError.textContent = "";
+      logoutError.classList.remove("visible");
+      confirmLogoutButton.disabled = false;
+      confirmLogoutButton.textContent = "Yes, Log Out";
+
+      if (typeof logoutModal.showModal === "function") {
+        logoutModal.showModal();
+        cancelLogoutButton.focus();
+      } else if (window.confirm("Are you sure you want to log out?")) {
+        performLogout();
+      }
+    }
+
+    logoutLink.addEventListener("click", event => {
+      event.preventDefault();
+      openLogoutModal();
+    });
+
+    cancelLogoutButton.addEventListener("click", () => {
+      logoutModal.close();
+    });
+
+    logoutModal.addEventListener("click", event => {
+      if (event.target === logoutModal) {
+        logoutModal.close();
+      }
+    });
+
+    async function performLogout() {
+      confirmLogoutButton.disabled = true;
+      confirmLogoutButton.textContent = "Logging Out...";
+      logoutError.textContent = "";
+      logoutError.classList.remove("visible");
+
+      try {
+        const response = await fetch(LOGOUT_URL, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json"
+          },
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Logout failed (HTTP ${response.status}). Please try again.`
+          );
+        }
+
+        /*
+          Redirect after the server has completed the logout request.
+          The login page is the root URL in this dashboard.
+        */
+        window.location.replace("/");
+      } catch (error) {
+        logoutError.textContent =
+          error.message || "Unable to log out. Please try again.";
+
+        logoutError.classList.add("visible");
+        confirmLogoutButton.disabled = false;
+        confirmLogoutButton.textContent = "Try Again";
+      }
+    }
+
+    confirmLogoutButton.addEventListener("click", performLogout);
+
+    /* INITIAL LOAD */
+
+    loadGrantees();
+  </script>
+</body>
+</html>
